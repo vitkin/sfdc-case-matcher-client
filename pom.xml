@@ -9,7 +9,34 @@
 
   <name>SFDC Case Matcher Client</name>
 
-  <version>1.0</version>
+  <version>2.0</version>
+
+  <parent>
+    <groupId>com.sforce.sfdc-wsc</groupId>
+    <artifactId>sfdc-wsc-client</artifactId>
+    <version>29.0.0</version>
+  </parent>
+
+  <url>https://github.com/vitkin/sfdc-case-matcher-client</url>
+
+  <prerequisites>
+    <maven>3.0</maven>
+  </prerequisites>
+
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/vitkin/sfdc-case-matcher-client/issues</url>
+  </issueManagement>
+
+  <inceptionYear>2013</inceptionYear>
+
+  <developers>
+    <developer>
+      <id>vitkin</id>
+      <name>Victor Itkin</name>
+      <email>victor.itkin@gmail.com</email>
+    </developer>
+  </developers>
 
   <licenses>
     <license>
@@ -19,10 +46,16 @@
     </license>
   </licenses>
 
+  <scm>
+    <connection>scm:git:https://github.com/vitkin/sfdc-case-matcher-client.git</connection>
+    <developerConnection>scm:git:git@github.com:vitkin/sfdc-case-matcher-client.git</developerConnection>
+    <url>https://github.com/vitkin/sfdc-case-matcher-client</url>
+  </scm>
+
   <build>
     <pluginManagement>
       <plugins>
-        <!--This plugin's configuration is used to store Eclipse m2e settings
+        <!--This plugin's configuration is used to store Eclipse m2e settings 
         only. It has no influence on the Maven build itself. -->
         <plugin>
           <groupId>org.eclipse.m2e</groupId>
@@ -37,22 +70,8 @@
                     <artifactId>license-maven-plugin</artifactId>
                     <versionRange>[1.5,)</versionRange>
                     <goals>
-                      <goal>exec</goal>
-                      <goal>update-file-header</goal>
                       <goal>update-project-license</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore></ignore>
-                  </action>
-                </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>axistools-maven-plugin</artifactId>
-                    <versionRange>[1.4,)</versionRange>
-                    <goals>
-                      <goal>wsdl2java</goal>
+                      <goal>update-file-header</goal>
                     </goals>
                   </pluginExecutionFilter>
                   <action>
@@ -70,224 +89,63 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>license-maven-plugin</artifactId>
-        <version>1.5</version>
         <configuration>
           <licenseName>apache_v2</licenseName>
           <inceptionYear>2013</inceptionYear>
           <organizationName>Victor Itkin</organizationName>
         </configuration>
-        <executions>
-          <execution>
-            <id>update-file-header</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>update-file-header</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>update-project-license</id>
-            <goals>
-              <goal>update-project-license</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.8</version>
-        <executions>
-          <execution>
-            <id>add-source</id>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>${project.generated}</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
-        <artifactId>axistools-maven-plugin</artifactId>
-        <version>1.4</version>
-        <configuration>
-          <allElements>true</allElements>
-          <noWrapped>false</noWrapped>
-          <typeMappingVersion>1.2</typeMappingVersion>
-
-          <!--
-            The plugin navigates your source src/main/** tree and finds your
-            WSDLs for you; just name them individually in a <wsdlFiles/>
-            element.
-          -->
-          <!--
-          <wsdlFiles>
-            <wsdlFiles>CaseMatcher.wsdl</wsdlFiles>
-          </wsdlFiles>
-          -->
-
-          <!--
-            This is optional, but lets you explicitly namespace the
-            generated code.
-          -->
-          <!--
-          <packageSpace>com.sforce.soap.casematcher</packageSpace>
-          -->
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>wsdl2java</goal>
-            </goals>
-          </execution>
-        </executions>
-        <!--
-          Required for attachment support; you can remove these dependencies
-          if attachment support is not needed. Note that if you do want it, you
-          have to specify the dependencies both here in the plugin and also in
-          the POM dependencies.
-        -->
-        <dependencies>
-          <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>mailapi</artifactId>
-            <version>1.5.0</version>
-          </dependency>
-        </dependencies>
+        <artifactId>exec-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
 
   <profiles>
     <profile>
-      <id>attach-sources</id>
+      <id>download-wsdl</id>
       <build>
         <plugins>
           <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-source-plugin</artifactId>
-            <version>2.2.1</version>
-            <executions>
-              <execution>
-                <id>attach-sources</id>
-                <goals>
-                  <goal>jar-no-fork</goal>
-                </goals>
-              </execution>
-            </executions>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>properties-maven-plugin</artifactId>
+            <configuration>
+              <files>
+                <file>${basedir}/build.properties</file>
+              </files>
+            </configuration>
           </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>attach-javadocs</id>
-      <build>
-        <plugins>
           <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.9.1</version>
-            <executions>
-              <execution>
-                <id>attach-javadocs</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-              </execution>
-            </executions>
+            <groupId>vitkin.sfdc</groupId>
+            <artifactId>wsdl-maven-plugin</artifactId>
+            <configuration>
+              <cookiesDirectory>${basedir}/cookies</cookiesDirectory>
+              <wsdlUri>services/wsdl/class/${wsdl.name}</wsdlUri>
+            </configuration>
           </plugin>
         </plugins>
       </build>
     </profile>
   </profiles>
 
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
-      <scope>test</scope>
-    </dependency>
-
-    <!--
-      Apache Axis is an open source SOAP engine and provides implementation
-      of both JAX-RPC and SAAJ.
-    -->
-    <dependency>
-      <groupId>org.apache.axis</groupId>
-      <artifactId>axis</artifactId>
-      <version>1.4</version>
-    </dependency>
-
-    <!--
-      JAX-RPC enables Java developers to develop SOAP based interoperable
-      Web Services. Its provides a way so that you can call services on
-      other machines like RPC does.
-    -->
-    <dependency>
-      <groupId>org.apache.axis</groupId>
-      <artifactId>axis-jaxrpc</artifactId>
-      <version>1.4</version>
-    </dependency>
-
-    <!--
-      SAAJ provides a way of creating SOAP envelopes (w or w/o attachments)
-      which can be then sent across any transport. JAX-RPC uses soap
-      envelopes created by SAAJ.
-    -->
-    <dependency>
-      <groupId>org.apache.axis</groupId>
-      <artifactId>axis-saaj</artifactId>
-      <version>1.4</version>
-    </dependency>
-
-    <dependency>
-      <groupId>wsdl4j</groupId>
-      <artifactId>wsdl4j</artifactId>
-      <version>1.5.1</version>
-    </dependency>
-
-    <!--
-      Required for attachment support; you can remove these dependencies
-      if attachment support is not needed. Note that if you do want it, you
-      have to specify the dependencies both here in the plugin and also in
-      the POM dependencies.
-    -->
-    <dependency>
-      <groupId>com.sun.mail</groupId>
-      <artifactId>mailapi</artifactId>
-      <version>1.5.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <version>1.0.4</version>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-discovery</groupId>
-      <artifactId>commons-discovery</artifactId>
-      <version>0.2</version>
-    </dependency>
-  </dependencies>
+  <repositories>
+    <repository>
+      <id>bintray</id>
+      <name>bintray</name>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <url>http://dl.bintray.com/vitkin/maven</url>
+    </repository>
+  </repositories>
 
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <wsdl.name>CaseMatcher</wsdl.name>
-    <project.generated>${basedir}/target/generated-sources/axistools/wsdl2java</project.generated>
+    <license.licenseResolver />
   </properties>
 </project>
